@@ -1,0 +1,1 @@
+Full-Stack expense tracked web application built with postgresql,python,html,css and js. frontend hosted on vercel with backend hosted on render. 
