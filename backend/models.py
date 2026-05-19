@@ -23,6 +23,3 @@ class ExpenseUpdate(SQLModel):
     category: str | None = None
     date: date | None = None
     notes: str | None = None
-
-class ExpenseDelete(SQLModel):
-    id: int
