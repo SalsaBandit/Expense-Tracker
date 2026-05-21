@@ -7,6 +7,7 @@ const loadExpensesBtn = document.getElementById("load-expenses-btn");
 const formHeading = document.getElementById("form-heading");
 const submitBtn = document.getElementById("submit-btn");
 const cancelEditBtn = document.getElementById("cancel-edit-btn");
+const filterCategoryEl = document.getElementById("filter-category");
 
 let editingExpenseId = null;
 
@@ -84,6 +85,7 @@ expenseForm.addEventListener("submit", async (event) => {
     );
 
     setCreateMode();
+    await loadCategories();
     await loadExpenses();
   } catch (error) {
     showMessage(error.message, "error");
@@ -112,7 +114,37 @@ async function deleteExpense(expenseId) {
       setCreateMode();
     }
 
+    await loadCategories();
     await loadExpenses();
+  } catch (error) {
+    showMessage(error.message, "error");
+  }
+}
+
+async function loadCategories() {
+  try {
+    const currentValue = filterCategoryEl.value;
+
+    const response = await fetch(`${API_BASE_URL}/categories`);
+
+    if (!response.ok) {
+      throw new Error("Failed to load categories");
+    }
+
+    const categories = await response.json();
+
+    filterCategoryEl.innerHTML = `<option value="">All categories</option>`;
+
+    categories.forEach((category) => {
+      const option = document.createElement("option");
+      option.value = category;
+      option.textContent = category;
+      filterCategoryEl.appendChild(option);
+    });
+
+    if ([...filterCategoryEl.options].some(option => option.value === currentValue)) {
+      filterCategoryEl.value = currentValue;
+    }
   } catch (error) {
     showMessage(error.message, "error");
   }
@@ -122,7 +154,12 @@ async function loadExpenses() {
   expenseListEl.innerHTML = "<p class='empty-state'>Loading expenses...</p>";
 
   try {
-    const response = await fetch(`${API_BASE_URL}/expenses`);
+    const selectedCategory = filterCategoryEl.value;
+    const url = selectedCategory
+      ? `${API_BASE_URL}/expenses?${new URLSearchParams({ category: selectedCategory }).toString()}`
+      : `${API_BASE_URL}/expenses`;
+
+    const response = await fetch(url);
 
     if (!response.ok) {
       throw new Error("Failed to load expenses");
@@ -131,7 +168,7 @@ async function loadExpenses() {
     const expenses = await response.json();
 
     if (expenses.length === 0) {
-      expenseListEl.innerHTML = "<p class='empty-state'>No expenses yet.</p>";
+      expenseListEl.innerHTML = "<p class='empty-state'>No expenses found.</p>";
       return;
     }
 
@@ -184,6 +221,11 @@ async function loadExpenses() {
 }
 
 loadExpensesBtn.addEventListener("click", loadExpenses);
+filterCategoryEl.addEventListener("change", loadExpenses);
 
 setCreateMode();
-loadExpenses();
+
+(async function initializeApp() {
+  await loadCategories();
+  await loadExpenses();
+})();

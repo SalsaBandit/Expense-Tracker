@@ -84,12 +84,14 @@ label {
 
 input,
 textarea,
+select,
 button {
   font: inherit;
 }
 
 input,
-textarea {
+textarea,
+select {
   width: 100%;
   padding: 12px 14px;
   border: 1px solid var(--border);
@@ -104,7 +106,8 @@ textarea {
 }
 
 input:focus,
-textarea:focus {
+textarea:focus,
+select:focus {
   outline: 2px solid rgba(37, 99, 235, 0.2);
   border-color: var(--primary);
 }
@@ -154,6 +157,12 @@ textarea:focus {
 
 .message.error {
   color: var(--error);
+}
+
+.filter-row {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 16px;
 }
 
 .expense-list {

@@ -19,7 +19,7 @@
     <header class="page-header">
       <h1>Expense Tracker</h1>
       <p class="subtitle">
-        A simple app to manage expenses and budget.
+        Track expenses with a frontend that connects to your FastAPI backend.
       </p>
     </header>
 
@@ -109,6 +109,13 @@
         >
           Refresh
         </button>
+      </div>
+
+      <div class="filter-row">
+        <label for="filter-category">Filter by category</label>
+        <select id="filter-category" name="filter-category">
+          <option value="">All categories</option>
+        </select>
       </div>
 
       <div id="expense-list" class="expense-list">
