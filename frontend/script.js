@@ -1,4 +1,4 @@
-const API_BASE_URL = "https://expense-tracker-cyan-alpha.vercel.app";
+const API_BASE_URL = "https://expense-tracker-gk20.onrender.com";
 
 const registerForm = document.getElementById("register-form");
 const loginForm = document.getElementById("login-form");
