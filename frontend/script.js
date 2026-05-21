@@ -1,4 +1,9 @@
-const API_BASE_URL = "https://expense-tracker-gk20.onrender.com";
+const API_BASE_URL = "https://expense-tracker-cyan-alpha.vercel.app";
+
+const registerForm = document.getElementById("register-form");
+const loginForm = document.getElementById("login-form");
+const logoutBtn = document.getElementById("logout-btn");
+const authStatusEl = document.getElementById("auth-status");
 
 const expenseForm = document.getElementById("expense-form");
 const messageEl = document.getElementById("message");
@@ -8,12 +13,45 @@ const formHeading = document.getElementById("form-heading");
 const submitBtn = document.getElementById("submit-btn");
 const cancelEditBtn = document.getElementById("cancel-edit-btn");
 const filterCategoryEl = document.getElementById("filter-category");
+const categoryTotalsListEl = document.getElementById("category-totals-list");
 
 let editingExpenseId = null;
+let accessToken = "";
+let currentUserEmail = "";
 
 function showMessage(text, type) {
   messageEl.textContent = text;
   messageEl.className = `message ${type}`;
+}
+
+function updateAuthUI() {
+  const loggedIn = Boolean(accessToken);
+
+  authStatusEl.textContent = loggedIn
+    ? `Logged in as ${currentUserEmail}`
+    : "Not logged in.";
+
+  logoutBtn.classList.toggle("hidden", !loggedIn);
+
+  if (!loggedIn) {
+    expenseListEl.innerHTML = "<p class='empty-state'>Log in to load expenses.</p>";
+    categoryTotalsListEl.innerHTML = "<p class='empty-state'>Log in to see totals.</p>";
+    filterCategoryEl.innerHTML = `<option value="">All categories</option>`;
+  }
+}
+
+function getAuthHeaders(includeJson = true) {
+  const headers = {};
+
+  if (includeJson) {
+    headers["Content-Type"] = "application/json";
+  }
+
+  if (accessToken) {
+    headers["Authorization"] = `Bearer ${accessToken}`;
+  }
+
+  return headers;
 }
 
 function setCreateMode() {
@@ -39,13 +77,99 @@ function setEditMode(expense) {
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
+function requireLogin() {
+  if (!accessToken) {
+    showMessage("Please log in first.", "error");
+    return false;
+  }
+  return true;
+}
+
 cancelEditBtn.addEventListener("click", () => {
   setCreateMode();
   showMessage("Edit cancelled.", "success");
 });
 
+logoutBtn.addEventListener("click", () => {
+  accessToken = "";
+  currentUserEmail = "";
+  editingExpenseId = null;
+  setCreateMode();
+  updateAuthUI();
+  showMessage("Logged out successfully.", "success");
+});
+
+registerForm.addEventListener("submit", async (event) => {
+  event.preventDefault();
+
+  const email = document.getElementById("register-email").value.trim().toLowerCase();
+  const password = document.getElementById("register-password").value;
+
+  try {
+    const response = await fetch(`${API_BASE_URL}/register`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ email, password })
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.detail || "Registration failed");
+    }
+
+    registerForm.reset();
+    showMessage("Registration successful. You can now log in.", "success");
+  } catch (error) {
+    showMessage(error.message, "error");
+  }
+});
+
+loginForm.addEventListener("submit", async (event) => {
+  event.preventDefault();
+
+  const email = document.getElementById("login-email").value.trim().toLowerCase();
+  const password = document.getElementById("login-password").value;
+
+  try {
+    const formData = new URLSearchParams();
+    formData.append("username", email);
+    formData.append("password", password);
+
+    const response = await fetch(`${API_BASE_URL}/token`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded"
+      },
+      body: formData.toString()
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.detail || "Login failed");
+    }
+
+    const data = await response.json();
+    accessToken = data.access_token;
+    currentUserEmail = email;
+
+    loginForm.reset();
+    updateAuthUI();
+    showMessage("Login successful.", "success");
+
+    await loadCategories();
+    await loadExpenses();
+    await loadCategoryTotals();
+  } catch (error) {
+    showMessage(error.message, "error");
+  }
+});
+
 expenseForm.addEventListener("submit", async (event) => {
   event.preventDefault();
+
+  if (!requireLogin()) return;
 
   const expenseData = {
     title: document.getElementById("title").value.trim(),
@@ -65,14 +189,15 @@ expenseForm.addEventListener("submit", async (event) => {
   try {
     const response = await fetch(url, {
       method,
-      headers: {
-        "Content-Type": "application/json"
-      },
+      headers: getAuthHeaders(true),
       body: JSON.stringify(expenseData)
     });
 
     if (!response.ok) {
-      throw new Error(isEditing ? "Failed to update expense" : "Failed to create expense");
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(
+        errorData.detail || (isEditing ? "Failed to update expense" : "Failed to create expense")
+      );
     }
 
     const savedExpense = await response.json();
@@ -87,25 +212,27 @@ expenseForm.addEventListener("submit", async (event) => {
     setCreateMode();
     await loadCategories();
     await loadExpenses();
+    await loadCategoryTotals();
   } catch (error) {
     showMessage(error.message, "error");
   }
 });
 
 async function deleteExpense(expenseId) {
-  const confirmed = window.confirm("confirm expense deletion?");
+  if (!requireLogin()) return;
 
-  if (!confirmed) {
-    return;
-  }
+  const confirmed = window.confirm("Are you sure you want to delete this expense?");
+  if (!confirmed) return;
 
   try {
     const response = await fetch(`${API_BASE_URL}/expenses/${expenseId}`, {
-      method: "DELETE"
+      method: "DELETE",
+      headers: getAuthHeaders(false)
     });
 
     if (!response.ok) {
-      throw new Error("Failed to delete expense");
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.detail || "Failed to delete expense");
     }
 
     showMessage("Expense deleted successfully.", "success");
@@ -116,19 +243,28 @@ async function deleteExpense(expenseId) {
 
     await loadCategories();
     await loadExpenses();
+    await loadCategoryTotals();
   } catch (error) {
     showMessage(error.message, "error");
   }
 }
 
 async function loadCategories() {
+  if (!accessToken) {
+    filterCategoryEl.innerHTML = `<option value="">All categories</option>`;
+    return;
+  }
+
   try {
     const currentValue = filterCategoryEl.value;
 
-    const response = await fetch(`${API_BASE_URL}/categories`);
+    const response = await fetch(`${API_BASE_URL}/categories`, {
+      headers: getAuthHeaders(false)
+    });
 
     if (!response.ok) {
-      throw new Error("Failed to load categories");
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.detail || "Failed to load categories");
     }
 
     const categories = await response.json();
@@ -142,7 +278,7 @@ async function loadCategories() {
       filterCategoryEl.appendChild(option);
     });
 
-    if ([...filterCategoryEl.options].some(option => option.value === currentValue)) {
+    if ([...filterCategoryEl.options].some((option) => option.value === currentValue)) {
       filterCategoryEl.value = currentValue;
     }
   } catch (error) {
@@ -151,6 +287,11 @@ async function loadCategories() {
 }
 
 async function loadExpenses() {
+  if (!accessToken) {
+    expenseListEl.innerHTML = "<p class='empty-state'>Log in to load expenses.</p>";
+    return;
+  }
+
   expenseListEl.innerHTML = "<p class='empty-state'>Loading expenses...</p>";
 
   try {
@@ -159,10 +300,13 @@ async function loadExpenses() {
       ? `${API_BASE_URL}/expenses?${new URLSearchParams({ category: selectedCategory }).toString()}`
       : `${API_BASE_URL}/expenses`;
 
-    const response = await fetch(url);
+    const response = await fetch(url, {
+      headers: getAuthHeaders(false)
+    });
 
     if (!response.ok) {
-      throw new Error("Failed to load expenses");
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.detail || "Failed to load expenses");
     }
 
     const expenses = await response.json();
@@ -220,12 +364,54 @@ async function loadExpenses() {
   }
 }
 
-loadExpensesBtn.addEventListener("click", loadExpenses);
-filterCategoryEl.addEventListener("change", loadExpenses);
+async function loadCategoryTotals() {
+  if (!accessToken) {
+    categoryTotalsListEl.innerHTML = "<p class='empty-state'>Log in to see totals.</p>";
+    return;
+  }
+
+  try {
+    const response = await fetch(`${API_BASE_URL}/expenses/category-totals`, {
+      headers: getAuthHeaders(false)
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.detail || "Failed to load category totals");
+    }
+
+    const totals = await response.json();
+
+    if (totals.length === 0) {
+      categoryTotalsListEl.innerHTML = "<p class='empty-state'>No totals available yet.</p>";
+      return;
+    }
+
+    categoryTotalsListEl.innerHTML = totals
+      .map(
+        (item) => `
+          <article class="expense-item">
+            <h3>${item.category}</h3>
+            <p><strong>Total:</strong> $${Number(item.total).toFixed(2)}</p>
+          </article>
+        `
+      )
+      .join("");
+  } catch (error) {
+    categoryTotalsListEl.innerHTML = `<p class="empty-state">${error.message}</p>`;
+  }
+}
+
+loadExpensesBtn.addEventListener("click", async () => {
+  if (!requireLogin()) return;
+  await loadExpenses();
+  await loadCategoryTotals();
+});
+
+filterCategoryEl.addEventListener("change", async () => {
+  if (!requireLogin()) return;
+  await loadExpenses();
+});
 
 setCreateMode();
-
-(async function initializeApp() {
-  await loadCategories();
-  await loadExpenses();
-})();
+updateAuthUI();

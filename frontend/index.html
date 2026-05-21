@@ -19,9 +19,58 @@
     <header class="page-header">
       <h1>Expense Tracker</h1>
       <p class="subtitle">
-        Simple Expense tracker application.
+        Track expenses with user authentication and category totals.
       </p>
     </header>
+
+    <section class="card">
+      <div class="section-header">
+        <h2>Account</h2>
+      </div>
+
+      <div class="auth-grid">
+        <form id="register-form" class="expense-form">
+          <h3>Create Account</h3>
+
+          <div class="form-group">
+            <label for="register-email">Email</label>
+            <input type="email" id="register-email" required />
+          </div>
+
+          <div class="form-group">
+            <label for="register-password">Password</label>
+            <input type="password" id="register-password" required />
+          </div>
+
+          <button type="submit" class="btn">Register</button>
+        </form>
+
+        <form id="login-form" class="expense-form">
+          <h3>Login</h3>
+
+          <div class="form-group">
+            <label for="login-email">Email</label>
+            <input type="email" id="login-email" required />
+          </div>
+
+          <div class="form-group">
+            <label for="login-password">Password</label>
+            <input type="password" id="login-password" required />
+          </div>
+
+          <button type="submit" class="btn secondary-btn">Login</button>
+        </form>
+      </div>
+
+      <div class="auth-status-row">
+        <p id="auth-status" class="auth-status">Not logged in.</p>
+        <button id="logout-btn" class="btn secondary-btn hidden" type="button">
+          Logout
+        </button>
+      </div>
+
+      <p id="message" class="message" aria-live="polite"></p>
+    </section>
 
     <section class="card">
       <div class="section-header">
@@ -95,8 +144,6 @@
           Add Expense
         </button>
       </form>
-
-      <p id="message" class="message" aria-live="polite"></p>
     </section>
 
     <section class="card">
@@ -119,7 +166,17 @@
       </div>
 
       <div id="expense-list" class="expense-list">
-        <p class="empty-state">No expenses loaded yet.</p>
+        <p class="empty-state">Log in to load expenses.</p>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="section-header">
+        <h2>Total Spend by Category</h2>
+      </div>
+
+      <div id="category-totals-list" class="expense-list">
+        <p class="empty-state">Log in to see totals.</p>
       </div>
     </section>
   </main>
