@@ -93,7 +93,7 @@ expenseForm.addEventListener("submit", async (event) => {
 });
 
 async function deleteExpense(expenseId) {
-  const confirmed = window.confirm("Are you sure you want to delete this expense?");
+  const confirmed = window.confirm("confirm expense deletion?");
 
   if (!confirmed) {
     return;
