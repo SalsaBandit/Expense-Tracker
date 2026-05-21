@@ -23,9 +23,26 @@
 body {
   font-family: "Inter", sans-serif;
   background-color: var(--bg);
+  background-image: url('https://images.unsplash.com/photo-1559163853-71f12cb41598?w=1200&h=800&fit=crop');
+  background-attachment: fixed;
+  background-size: cover;
+  background-position: center;
   color: var(--text);
   line-height: 1.6;
   padding: 32px 16px;
+  position: relative;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.92);
+  pointer-events: none;
+  z-index: -1;
 }
 
 .container {
