@@ -60,16 +60,6 @@ def read_expenses(session: SessionDep, category: str | None = None):
     return expenses
 
 
-@app.get("/expenses/{expense_id}", response_model=ExpenseRead)
-def read_expense(expense_id: int, session: SessionDep):
-    expense = session.get(Expense, expense_id)
-
-    if not expense:
-        raise HTTPException(status_code=404, detail="Expense not found")
-
-    return expense
-
-
 @app.patch("/expenses/{expense_id}", response_model=ExpenseRead)
 def update_expense(expense_id: int, expense_update: ExpenseUpdate, session: SessionDep):
     expense = session.get(Expense, expense_id)
