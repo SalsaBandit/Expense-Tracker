@@ -14,8 +14,10 @@
   --border: #e5e7eb;
   --success: #166534;
   --error: #b91c1c;
+  --error-bg: #fef2f2;
   --shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
   --max-width: 900px;
+  --radius: 16px;
 }
 
 body {
@@ -47,13 +49,21 @@ body {
 .card {
   background-color: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 16px;
+  border-radius: var(--radius);
   box-shadow: var(--shadow);
   padding: 24px;
   margin-bottom: 24px;
 }
 
 .card h2 {
+  margin-bottom: 16px;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
   margin-bottom: 16px;
 }
 
@@ -80,10 +90,17 @@ button {
 
 input,
 textarea {
+  width: 100%;
   padding: 12px 14px;
   border: 1px solid var(--border);
   border-radius: 10px;
-  background-color: #fff;
+  background-color: #ffffff;
+  color: var(--text);
+}
+
+textarea {
+  resize: vertical;
+  min-height: 90px;
 }
 
 input:focus,
@@ -95,15 +112,20 @@ textarea:focus {
 .btn {
   border: none;
   background-color: var(--primary);
-  color: white;
+  color: #ffffff;
   padding: 12px 18px;
   border-radius: 10px;
   font-weight: 600;
   cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.2s ease;
 }
 
 .btn:hover {
   background-color: var(--primary-dark);
+}
+
+.btn:active {
+  transform: translateY(1px);
 }
 
 .secondary-btn {
@@ -116,9 +138,14 @@ textarea:focus {
   background-color: #eff6ff;
 }
 
+.hidden {
+  display: none;
+}
+
 .message {
   margin-top: 16px;
   font-weight: 600;
+  min-height: 24px;
 }
 
 .message.success {
@@ -127,14 +154,6 @@ textarea:focus {
 
 .message.error {
   color: var(--error);
-}
-
-.section-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 16px;
-  margin-bottom: 16px;
 }
 
 .expense-list {
@@ -153,9 +172,45 @@ textarea:focus {
   margin-bottom: 8px;
 }
 
+.expense-item p {
+  margin-bottom: 6px;
+}
+
 .expense-meta {
   color: var(--muted);
   font-size: 0.95rem;
+}
+
+.expense-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 14px;
+}
+
+.action-btn {
+  border: 1px solid var(--border);
+  background-color: #ffffff;
+  color: var(--text);
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.action-btn:hover {
+  background-color: #f3f4f6;
+}
+
+.delete-btn {
+  color: var(--error);
+  border-color: #fecaca;
+  background-color: #ffffff;
+}
+
+.delete-btn:hover {
+  background-color: var(--error-bg);
 }
 
 .empty-state {
@@ -163,6 +218,10 @@ textarea:focus {
 }
 
 @media (max-width: 600px) {
+  body {
+    padding: 20px 12px;
+  }
+
   .card {
     padding: 18px;
   }
@@ -172,7 +231,12 @@ textarea:focus {
     align-items: stretch;
   }
 
-  .btn {
+  .btn,
+  .action-btn {
     width: 100%;
+  }
+
+  .expense-actions {
+    flex-direction: column;
   }
 }
