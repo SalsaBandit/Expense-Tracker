@@ -7,6 +7,7 @@ NOTE: due to the tier of Render's free plan, the backend may take 30 seconds to 
 ## Demo
 - Live Frontend: https://expense-tracker-cyan-alpha.vercel.app
 - Backend API: https://expense-tracker-gk20.onrender.com
+- Backend API Documentation: https://expense-tracker-gk20.onrender.com/docs
 
 ## Overview
 This project is a full-stack expense tracker built to practice real-world web development concepts such as authentication, REST APIs, database design, frontend-backend integration, and deployment. Users can register, log in, create and manage their own expenses, filter expenses by category, and view total spending grouped by category. Each user only sees their own data.
@@ -28,7 +29,7 @@ This project is a full-stack expense tracker built to practice real-world web de
 - Deployment: Vercel (frontend), Render (backend)
 
 ## Architecture
-The frontend is a static JavaScript app that sends HTTP requests to the FastAPI backend using `fetch()`.
+The frontend is a JavaScript app that sends HTTP requests to the FastAPI backend using `fetch()`.
 
 The backend handles authentication, validates requests, connects to PostgreSQL, and returns JSON responses. Expense records are linked to users through the `owner_id` field, and protected routes use JWT bearer tokens to identify the current user.
 
@@ -49,7 +50,6 @@ The backend handles authentication, validates requests, connects to PostgreSQL, 
 - `owner_id`
 
 ## Screenshots
-Add screenshots here, for example:
 
 ```md
 
