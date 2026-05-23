@@ -2,7 +2,8 @@
 
 A full-stack expense tracking web app with user authentication, registration, per-user data isolation, and category-based spending totals.
 
-NOTE: due to the tier of Render's free plan, the backend may take 30 seconds to wake up if it has been idle. This is a common issue with free hosting platforms that use sleep mode to save resources. Once the backend is awake, it should respond normally. the postgresql database is only available for a limited time on the free plan and will be deleted after that time, so the backend may not work after a certain date (e.g., 30 days after creation). To run the backend locally, follow the installation instructions below.
+
+**NOTE:** due to the tier of Render's free plan, the backend may take **30 seconds** to wake up if it has been idle. This is a common issue with free hosting platforms that use sleep mode to save resources. Once the backend is awake, it should respond normally. the postgresql database is only available for a limited time on the free plan and will be deleted after that time, so the backend may not work after a certain date (e.g., 30 days after creation). To run the backend locally, follow the installation instructions below.
 
 ## Demo
 - Live Frontend: https://expense-tracker-cyan-alpha.vercel.app
