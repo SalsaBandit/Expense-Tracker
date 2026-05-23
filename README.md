@@ -62,6 +62,7 @@ The backend handles authentication, validates requests, connects to PostgreSQL, 
 
 
 ### Backend setup
+Modify secret_key in your environment for increased security
 Add an environment variable `DATABASE_URL` with your PostgreSQL connection string, then run the backend server. modify main.py origins variable to allow your frontend origin.
 
 ```bash
