@@ -53,6 +53,11 @@ The backend handles authentication, validates requests, connects to PostgreSQL, 
 
 ```md
 
+<img width="855" height="658" alt="Screenshot 2026-05-22 at 10 00 41 PM" src="https://github.com/user-attachments/assets/581b5645-3004-46a7-b413-fad3a57b6423" />
+<img width="855" height="658" alt="Screenshot 2026-05-22 at 10 00 50 PM" src="https://github.com/user-attachments/assets/45e4a2a5-7654-4cb2-82a2-5822c96a9d31" />
+<img width="855" height="457" alt="Screenshot 2026-05-22 at 10 00 59 PM" src="https://github.com/user-attachments/assets/87cac3fc-f11e-432d-a8ce-63d8b17e1b7f" />
+
+
 
 
 ```
