@@ -51,16 +51,11 @@ The backend handles authentication, validates requests, connects to PostgreSQL, 
 
 ## Screenshots
 
-```md
 
-<img width="855" height="658" alt="Screenshot 2026-05-22 at 10 00 41 PM" src="https://github.com/user-attachments/assets/581b5645-3004-46a7-b413-fad3a57b6423" />
-<img width="855" height="658" alt="Screenshot 2026-05-22 at 10 00 50 PM" src="https://github.com/user-attachments/assets/45e4a2a5-7654-4cb2-82a2-5822c96a9d31" />
-<img width="855" height="457" alt="Screenshot 2026-05-22 at 10 00 59 PM" src="https://github.com/user-attachments/assets/87cac3fc-f11e-432d-a8ce-63d8b17e1b7f" />
+<img width="855" height="658" alt="Screenshot 2026-05-22 at 10 00 41 PM" src="https://github.com/user-attachments/assets/6f47def0-0bad-4333-a6a4-8bd1f28cf346" />
+<img width="851" height="742" alt="Screenshot 2026-05-22 at 10 00 50 PM" src="https://github.com/user-attachments/assets/5ea6e307-2a1c-45bd-a572-a854a0bc39fa" />
+<img width="852" height="437" alt="Screenshot 2026-05-22 at 10 00 59 PM" src="https://github.com/user-attachments/assets/20d77f7c-5203-4ecb-8990-46d571a17834" />
 
-
-
-
-```
 
 ## Installation
 
